@@ -54,4 +54,8 @@ public interface IProductInterface {
 
     public List<String> getAllCategories() throws IOException, RestClient.HttpRequestException;
     public List<Product> getAllProductsInACategory(String category) throws IOException, RestClient.HttpRequestException;
+
+    public List<Product> sortAllProductsDescending() throws IOException, RestClient.HttpRequestException;
+    public List<Product> limitProductsResults(int limit) throws IOException, RestClient.HttpRequestException;
+
 }

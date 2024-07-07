@@ -99,11 +99,39 @@ public class ProductsPositiveScenariosTests {
      * Verifies that all products in each category are not null.
      * @throws IOException if an I/O error occurs.
      */
-    @Test void verifyListProductsInCategory() throws IOException, RestClient.HttpRequestException {
+    @Test
+    public void verifyListProductsInCategory() throws IOException, RestClient.HttpRequestException {
         List<String> categories=productService.getAllCategories();
         for(String category:categories){
             Assert.assertNotNull(productService.getAllProductsInACategory(category));
         }
+    }
+
+    /**
+     * Verifies that products are returned in descending order by verifying that Id's are sorted
+     * @throws RestClient.HttpRequestException
+     * @throws IOException
+     */
+    @Test
+    public void verifyProductsAreSortedDesc() throws RestClient.HttpRequestException, IOException {
+        List<Product> products=productService.sortAllProductsDescending();
+        for(int i=products.size()-1;i>0;i--){
+            Assert.assertTrue(products.get(i).getId() > products.get(i-1).getId());
+
+        }
+    }
+
+    /***
+     * Verifies that the correct number of products is returned as specified by the limit
+     * @throws RestClient.HttpRequestException
+     * @throws IOException
+     */
+    @Test
+    public void verifyProductLimits() throws RestClient.HttpRequestException, IOException {
+        int limit=5;
+        List<Product> products=productService.limitProductsResults(limit);
+        Assert.assertEquals(products.size(),limit);
+
     }
     /**
      * Provides valid product IDs for parameterized tests.

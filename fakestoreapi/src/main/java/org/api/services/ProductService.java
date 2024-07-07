@@ -1,6 +1,5 @@
 package org.api.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Response;
@@ -23,9 +22,7 @@ public class ProductService implements IProductInterface {
     @Override
     public List<Product> getAllProducts() throws RestClient.HttpRequestException, IOException {
         HttpRequest request=new HttpRequest("get", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT,null, null);
-        String body=client.executeRequest(request).body().string();
-        List<Product> products=mapper.readValue(body,new TypeReference<List<Product>>() {});
-        return products;
+        return mapper.readValue(client.executeRequest(request).body().string(),new TypeReference<List<Product>>() {});
     }
 
     @Override
@@ -45,7 +42,6 @@ public class ProductService implements IProductInterface {
     public Product addProduct(Product product) throws IOException, RestClient.HttpRequestException {
         Map<String,String> header=createHeader("content-type","application/json; charset=UTF-8");
         HttpRequest request=new HttpRequest("POST", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT, mapper.writeValueAsString(product), header);
-        String body=client.executeRequest(request).body().string();
         return mapper.readValue(client.executeRequest(request).body().string(),Product.class);
     }
 
@@ -53,7 +49,6 @@ public class ProductService implements IProductInterface {
     public Product updateProduct(Product product) throws IOException, RestClient.HttpRequestException {
         Map<String,String> header=createHeader("content-type","application/json; charset=UTF-8");
         HttpRequest request=new HttpRequest("PUT", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT+product.getId(), mapper.writeValueAsString(product), header);
-        String body=client.executeRequest(request).body().string();
         return mapper.readValue(client.executeRequest(request).body().string(),Product.class);
 
     }
@@ -67,17 +62,29 @@ public class ProductService implements IProductInterface {
     @Override
     public List<String> getAllCategories() throws IOException, RestClient.HttpRequestException {
         HttpRequest request=new HttpRequest("get", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT+Constants.GET_ALL_CATEGORIES_ENDPOINT,null, null);
-        String body=client.executeRequest(request).body().string();
-        List<String> categories=mapper.readValue(body,new TypeReference<List<String>>() {});
-        return categories;
+        return mapper.readValue(client.executeRequest(request).body().string(),new TypeReference<List<String>>() {});
+
     }
 
     @Override
     public List<Product> getAllProductsInACategory(String category) throws IOException, RestClient.HttpRequestException {
         HttpRequest request=new HttpRequest("get", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT+Constants.GET_CATEGORY_PRODUCTS_ENDPOINT+category,null, null);
-        String body=client.executeRequest(request).body().string();
-        List<Product> products=mapper.readValue(body,new TypeReference<List<Product>>() {});
-        return products;
+        return mapper.readValue(client.executeRequest(request).body().string(),new TypeReference<List<Product>>() {});
+    }
+
+    @Override
+    public List<Product> sortAllProductsDescending() throws IOException, RestClient.HttpRequestException {
+        HttpRequest request=new HttpRequest("get", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT_SORT_LIMIT+Constants.SORT_DESC,null, null);
+        return mapper.readValue(client.executeRequest(request).body().string(),new TypeReference<List<Product>>() {});
+
+    }
+
+    @Override
+    public List<Product> limitProductsResults(int limit) throws RestClient.HttpRequestException, IOException {
+        HttpRequest request=new HttpRequest("Get",Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT_SORT_LIMIT+Constants.LIMIT+limit,null,null);
+
+        return mapper.readValue(client.executeRequest(request).body().string(), new TypeReference<List<Product>>() {});
+
     }
 
 
