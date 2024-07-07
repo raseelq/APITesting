@@ -9,6 +9,10 @@ public class Constants {
     public static final String GET_CATEGORY_PRODUCTS_ENDPOINT = "category/";
     public static final String SORT_DESC = "sort=desc/";
     public static final String LIMIT = "limit=";
+    public static final String GET_ALL_CARTS_ENDPOINT="carts/";
+    public static final String GET_USER_ENDPOINT="user/";
+    public static final String CARTS_ENDPOINT="carts?";
+
 
 
 

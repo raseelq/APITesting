@@ -8,6 +8,7 @@ import org.api.constants.Constants;
 import org.api.interfaces.IProductInterface;
 import org.api.models.HttpRequest;
 import org.api.models.Product;
+import org.api.utils.Utils;
 
 
 import java.io.IOException;
@@ -40,14 +41,14 @@ public class ProductService implements IProductInterface {
 
     @Override
     public Product addProduct(Product product) throws IOException, RestClient.HttpRequestException {
-        Map<String,String> header=createHeader("content-type","application/json; charset=UTF-8");
+        Map<String,String> header= Utils.createJsonHeader();
         HttpRequest request=new HttpRequest("POST", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT, mapper.writeValueAsString(product), header);
         return mapper.readValue(client.executeRequest(request).body().string(),Product.class);
     }
 
     @Override
     public Product updateProduct(Product product) throws IOException, RestClient.HttpRequestException {
-        Map<String,String> header=createHeader("content-type","application/json; charset=UTF-8");
+        Map<String,String> header= Utils.createJsonHeader();
         HttpRequest request=new HttpRequest("PUT", Constants.BASE_URL+Constants.GET_ALL_PRODUCTS_ENDPOINT+product.getId(), mapper.writeValueAsString(product), header);
         return mapper.readValue(client.executeRequest(request).body().string(),Product.class);
 
