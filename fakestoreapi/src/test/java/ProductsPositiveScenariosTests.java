@@ -115,9 +115,9 @@ public class ProductsPositiveScenariosTests {
     @Test
     public void verifyProductsAreSortedDesc() throws RestClient.HttpRequestException, IOException {
         List<Product> products=productService.sortAllProductsDescending();
-        for(int i=products.size()-1;i>0;i--){
-            Assert.assertTrue(products.get(i).getId() > products.get(i-1).getId());
-
+        for(int i=0;i<products.size()-1;i++){
+            Assert.assertTrue(products.get(i).getId() > products.get(i+1).getId());
+            //This test fails because results are not returned in a descending order
         }
     }
 

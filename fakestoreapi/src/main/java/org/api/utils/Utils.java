@@ -1,9 +1,15 @@
 package org.api.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
@@ -24,6 +30,21 @@ public class Utils {
         }catch (DateTimeParseException e){
             return LocalDate.parse(date,fullDateformatter);
         }
+    }
+    public static <T> T mapResponseToObject(String body, Class<T> type) throws JsonProcessingException {
+        ObjectMapper mapper=new ObjectMapper();
+        return mapper.readValue(body,type);
+    }
+    public static <T> List<T> mapResponseToObjectsList(String body,Class<T> type) throws JsonProcessingException {
+        ObjectMapper mapper=new ObjectMapper();
+        //helps in creating a CollectionType for a list containing elements of the specified type.
+        CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, type);
+        return mapper.readValue(body, listType);
+
+    }
+    private static <T> TypeReference<List<T>> getListTypeReference(Class<T> type){
+        return new TypeReference<List<T>>() {};
+
     }
 
 
