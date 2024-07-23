@@ -1,52 +1,83 @@
 package org.api.clients;
 import okhttp3.*;
-import org.api.Main;
-import org.api.models.HttpRequest;
+import org.api.models.api.HTTPResponse;
+import org.api.models.api.HttpRequest;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class RestClient{
-    OkHttpClient client;
+    // OkHttpClient instance to handle HTTP requests
+    private final OkHttpClient client;
 
     public RestClient() {
 
         this.client=new OkHttpClient();
     }
-
-    public Response executeRequest(HttpRequest httpRequest) throws HttpRequestException, IOException {
-        Request request;
-        try {
-            if(httpRequest.getMethod().equalsIgnoreCase("Post") || httpRequest.getMethod().equalsIgnoreCase("Put")) {
-                MediaType header=MediaType.get(httpRequest.getHeader().get("content-type"));
-                if(header==null) throw new IllegalArgumentException("content-type header is missing");
-                RequestBody body = RequestBody.create(header,httpRequest.getBody());
-                request = new Request.Builder()
-                        .method(httpRequest.getMethod(),body)
-                        .url(httpRequest.getUrl())
-                        .build();
-            }
-            else {
-            request = new Request.Builder()
-                    .url(httpRequest.getUrl())
-                    .build();
-            }
+    /**
+     * Executes the given HTTP request and returns the response.
+     *
+     * @param httpRequest the HTTP request to be executed
+     * @return the HTTP response
+     * @throws IOException if an I/O error occurs
+     */
+    public HTTPResponse executeRequest(HttpRequest httpRequest) throws IOException {
+        Request request=buildRequest(httpRequest);
+        try(Response response=client.newCall(request).execute()){
+        HTTPResponse httpResponse=new HTTPResponse();
+        httpResponse.setBody(response.body().string());
+        httpResponse.setCode(response.code());
+        return  httpResponse;
         }
-        catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Error building Http request"+e.getMessage());
-        }
-        Response response = client.newCall(request).execute();
-        if(!response.isSuccessful()){
-            throw new HttpRequestException("Http request failed with status code"+ response.code());
-        }
-        return response  ;
     }
+    /**
+     * Builds an OkHttp Request from the given HttpRequest object.
+     * @param httpRequest the HTTP request to be converted
+     * @return the built OkHttp Request
+     */
+    private Request buildRequest(HttpRequest httpRequest){
+        Request request=null;
+        try {
+            Request.Builder builder = new Request.Builder()
+                    .url(httpRequest.getUrl());
+            String method = httpRequest.getMethod().toString();
+            switch (method) {
+                case "GET":
+                case "DELETE":
+                    request = builder.method(method, null).build();
+                    break;
+                case "PUT":
+                case "POST":
+                    MediaType mediaType = getMediaType(httpRequest.getHeader(),"content-type");
+                    RequestBody body = RequestBody.create(mediaType, httpRequest.getBody());
+                    request = builder.method(method, body).build();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported method " + method);
+            }
+        }catch(IllegalArgumentException e){
+                throw new IllegalArgumentException("Error building Http request "+e.getMessage());
+         }
 
-    public class HttpRequestException extends Exception{
+        return request;
+    }
+    /**
+     * Retrieves the MediaType from headers.
+     * @param headers The map of headers.
+     * @param key The key to look for in headers.
+     * @return MediaType The MediaType corresponding to the header key.
+     */
+    private MediaType getMediaType(Map<String,String> headers, String key) {
+        if(headers==null || !headers.containsKey(key) ){
+            throw new IllegalArgumentException("header is missing or "+ key +" is missing from header");
+        }
+        return MediaType.get(headers.get(key));
+    }
+    // Custom exception class for HTTP request errors
+    public static class HttpRequestException extends Exception{
         public HttpRequestException(String message){
             super(message);
         }
     }
-
 
 }

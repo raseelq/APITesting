@@ -1,4 +1,4 @@
-package org.api.models;
+package org.api.models.api;
 
 import java.util.Map;
 
@@ -7,9 +7,9 @@ public class HttpRequest {
     String url;
     String body;
     Map<String ,String> header;
-    String method;
+    HttpMethod method;
 
-    public HttpRequest(String method, String url, String body, Map<String,String> header){
+    public HttpRequest(HttpMethod method, String url, String body, Map<String,String> header){
         this.method=method;
         this.url=url;
         this.body=body;
@@ -28,7 +28,7 @@ public class HttpRequest {
         return header;
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
     //Setters
@@ -44,7 +44,7 @@ public class HttpRequest {
         this.header = header;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(HttpMethod method) {
         this.method = method;
     }
 }

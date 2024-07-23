@@ -1,6 +1,5 @@
-package org.api.models;
+package org.api.models.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;

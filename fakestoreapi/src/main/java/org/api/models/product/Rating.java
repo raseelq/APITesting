@@ -1,4 +1,4 @@
-package org.api.models;
+package org.api.models.product;
 
 public class Rating {
     private double rate;

@@ -1,2 +1,5 @@
-package org.api.models.api;public enum HttpMethod {
+package org.api.models.api;
+
+public enum HttpMethod {
+    GET,PUT,POST,DELETE;
 }

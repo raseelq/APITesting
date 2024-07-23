@@ -1,4 +1,4 @@
-package org.api.models;
+package org.api.models.user;
 
 import java.util.Objects;
 

@@ -1,4 +1,6 @@
-package org.api.models;
+package org.api.models.cart;
+
+import java.util.Objects;
 
 public class CartItem {
     private int productId;
@@ -27,4 +29,13 @@ public class CartItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        return productId == cartItem.productId && quantity == cartItem.quantity;
+    }
+
 }

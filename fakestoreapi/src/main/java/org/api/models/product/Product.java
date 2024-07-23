@@ -1,6 +1,4 @@
-package org.api.models;
-
-import java.util.Optional;
+package org.api.models.product;
 
 public class Product {
 

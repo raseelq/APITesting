@@ -1,14 +1,17 @@
 import org.api.clients.RestClient;
 import org.api.interfaces.IProductInterface;
-import org.api.models.Product;
+import org.api.models.product.Product;
+import org.api.reports.ExtentReportsListeners;
 import org.api.services.ProductService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
+@Listeners(ExtentReportsListeners.class)
 public class ProductsNegativeScenariosTests {
     IProductInterface productService;
     @BeforeSuite

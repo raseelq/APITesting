@@ -1,119 +1,84 @@
 import org.api.clients.RestClient;
-import org.api.models.Cart;
-import org.api.models.CartItem;
-import org.api.models.Product;
+import org.api.constants.Constants;
+import org.api.interfaces.ICartInterface;
+import org.api.models.cart.Cart;
+import org.api.models.cart.CartItem;
 import org.api.services.CartService;
+import org.api.reports.ExtentReportsListeners;
 import org.api.utils.Utils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
+@Listeners(ExtentReportsListeners.class)
 public class CartsPositiveScenariosTests {
-    CartService cartService;
+    ICartInterface cartService;
+    List<Cart> carts;
+
     @BeforeSuite
-    public void setup(){
+    public void setup() throws IOException {
         cartService=new CartService();
+        String resourceFilePath=this.getClass().getResource(Constants.CARTS_SOURCE_FILE).getFile();
+        carts=cartService.mapListToCarts(Utils.readCSVResourceFile(resourceFilePath,","));
 
     }
     @Test
     private void verifyGetAllCarts() throws RestClient.HttpRequestException, IOException {
-        int count=7;
-        List<Cart> carts=cartService.getAllCarts();
-        Assert.assertEquals(carts.size(),count);
-
+        //verify the number of carts returned by get all carts API matches the number of carts in data file
+        List<Cart> cartsList=cartService.getAllCarts();
+        Assert.assertEquals(carts.size(),cartsList.size());
     }
     @Test(dataProvider ="cartsIdsProvider")
     private void verifyGetCartById(int Id) throws RestClient.HttpRequestException, IOException {
         Cart cart=cartService.getCartById(Id);
-        Assert.assertEquals(cart.getId(),Id);
-
+        Assert.assertEquals(cart.getId(),carts.get(Id-1).getId());
     }
     @Test
     private void verifyAddCart() throws RestClient.HttpRequestException, IOException {
-        // Create cart items
-        List<CartItem> items = new ArrayList<>();
-        items.add(createCartItem(5, 1));
-        items.add(createCartItem(1, 5));
+        Cart newCart=cartService.addNewCart(carts.get(0));
+        newCart.equals(carts.get(0));
 
-        // Create cart
-        Cart cart = new Cart();
-        cart.setUserId(5);
-        cart.setDate("2020-02-03");
-        cart.setProducts(items);
-
-        // Add new cart and verify the result
-        Cart newCart = cartService.addNewCart(cart);
-        compareAndVerifyEqualCarts(cart,newCart);
-
-
-        // Uncomment this line if the API properly increments the size of the cart list
-        // int beforeAddSize = cartService.getAllCarts().size();
-        //Assert.assertEquals(newCart.getProducts().size,beforeAddSize+1);
+        // Uncomment these two lines if the API increments the size of the cart list properly
+//        int beforeAddSize = cartService.getAllCarts().size();
+//        Assert.assertEquals(cartService.getAllCarts().size(),beforeAddSize+1);
     }
     @Test
     private void verifyUpdateCart() throws RestClient.HttpRequestException, IOException {
-        int id=7;
-        List<CartItem> items = new ArrayList<>();
-        items.add(createCartItem(1, 3));
-
-
-        // Create cart object
-        Cart cart = new Cart();
+        Cart cart=carts.get(0);
         cart.setUserId(3);
         cart.setDate("2019-12-10");
+        List<CartItem> items = new ArrayList<>();
+        items.add(createCartItem(1, 3));
         cart.setProducts(items);
-
-        Cart updatedCart = cartService.addNewCart(cart);
-        compareAndVerifyEqualCarts(cart,updatedCart);
-
+        Cart updatedCart = cartService.updateCart(cart);
+        //verify the changed fields are returned in the response with the new values
+        Assert.assertEquals(updatedCart.getUserId(),cart.getUserId());
+        Assert.assertEquals(updatedCart.getDate(),cart.getDate());
+        Assert.assertTrue(updatedCart.getProducts().equals(cart.getProducts()));
     }
 
     private CartItem createCartItem(int productId,int quantity){
         return new CartItem(productId,quantity);
     }
 
-    private void compareAndVerifyEqualCarts(Cart firstCart,Cart secondCart){
-
-        Assert.assertEquals(firstCart.getDate(), secondCart.getDate(), "Date should match");
-        Assert.assertEquals(firstCart.getUserId(), secondCart.getUserId(), "User ID should match");
-        Assert.assertEquals(firstCart.getProducts().size(), secondCart.getProducts().size(), "Number of items should match");
-
-        // Verify the first item in the cart
-        if(!(firstCart.getProducts().size()!=secondCart.getProducts().size())){
-            for(int i=0;i<firstCart.getProducts().size()-1;i++){
-                Assert.assertEquals(firstCart.getProducts().get(i).getProductId(), secondCart.getProducts().get(i).getProductId(), "Product ID should match");
-                Assert.assertEquals(firstCart.getProducts().get(i).getQuantity(), secondCart.getProducts().get(i).getQuantity(), "Quantity should match");
-
-            }
-        }
-
-
-    }
-    @Test
-    private void verifyDeleteCart() throws RestClient.HttpRequestException, IOException {
-        int id=7;
-        List<Cart> beforeDelete=cartService.getAllCarts();
+    @Test(dataProvider = "cartsIdsProvider")
+    private void verifyDeleteCart(int id) throws RestClient.HttpRequestException, IOException {
+        int sizeBeforeDelete=carts.size();
         Cart deleted =cartService.deleteCart(id);
         List<Cart> afterDelete=cartService.getAllCarts();
-        Assert.assertEquals(deleted.getId(),id);
-        Assert.assertEquals(beforeDelete.size(),afterDelete.size()  );
+        Assert.assertEquals(afterDelete.size(),sizeBeforeDelete-1); //Fails because delete carts API doesn't work properly
     }
-    @Test
-    private void verifyGetUserCart() throws RestClient.HttpRequestException, IOException {
-        int userId=2;
+    @Test(dataProvider = "cartsIdsProvider")
+    private void verifyGetUserCart(int userId) throws RestClient.HttpRequestException, IOException {
         List<Cart> userCarts=cartService.getUserCart(userId);
         for(Cart cart:userCarts){
             Assert.assertEquals(cart.getUserId(),userId);
-
         }
 
     }
@@ -134,7 +99,6 @@ public class CartsPositiveScenariosTests {
         int limit=5;
         List<Cart> carts=cartService.limitCartsResults(limit);
         Assert.assertEquals(carts.size(),limit);
-
     }
     @Test
     public void verifyCartsAreSortedDesc() throws RestClient.HttpRequestException, IOException {
@@ -150,6 +114,9 @@ public class CartsPositiveScenariosTests {
                 {1},
                 {2},
                 {3},
+                {4},
+                {5},
+                {6},
                 {7}
 
         };

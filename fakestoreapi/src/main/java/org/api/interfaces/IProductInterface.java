@@ -1,8 +1,7 @@
 package org.api.interfaces;
 
-import okhttp3.Response;
 import org.api.clients.RestClient;
-import org.api.models.Product;
+import org.api.models.product.Product;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,12 +49,12 @@ public interface IProductInterface {
      * @return : product details
      * @throws IOException
      */
-    public Response deleteProduct(int id) throws IOException, RestClient.HttpRequestException;
+    public Product deleteProduct(int id) throws IOException, RestClient.HttpRequestException;
 
     public List<String> getAllCategories() throws IOException, RestClient.HttpRequestException;
     public List<Product> getAllProductsInACategory(String category) throws IOException, RestClient.HttpRequestException;
 
     public List<Product> sortAllProductsDescending() throws IOException, RestClient.HttpRequestException;
     public List<Product> limitProductsResults(int limit) throws IOException, RestClient.HttpRequestException;
-
+    public List<Product> mapProductsListFromDataFile(List<List<String>> records) throws Exception;
 }

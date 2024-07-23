@@ -1,4 +1,4 @@
-package org.api.models;
+package org.api.models.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

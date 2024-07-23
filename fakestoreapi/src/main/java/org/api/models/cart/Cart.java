@@ -1,10 +1,11 @@
-package org.api.models;
+package org.api.models.cart;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Objects;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Cart {
     @JsonProperty("userId")
@@ -70,4 +71,13 @@ public class Cart {
                 ", id=" + id +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cart cart = (Cart) o;
+        return userId == cart.userId && id == cart.id && Objects.equals(date, cart.date) && Objects.equals(products, cart.products);
+    }
+
 }
