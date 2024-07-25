@@ -6,7 +6,6 @@ import org.api.constants.Constants;
 import org.api.models.api.HTTPResponse;
 import org.api.models.api.HttpMethod;
 import org.api.models.api.HttpRequest;
-import org.api.models.api.TokenResponse;
 import org.api.utils.Utils;
 
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.util.Map;
 
 public class LoginService {
     HttpRequest request;
-    HTTPResponse response;
     ObjectMapper mapper=new ObjectMapper();
     RestClient client=new RestClient();
     /**

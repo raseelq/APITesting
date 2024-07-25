@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.clients.RestClient;
 import org.api.constants.Constants;
 import org.api.interfaces.IUserInterface;
-import org.api.models.api.HTTPResponse;
 import org.api.models.api.HttpMethod;
 import org.api.models.api.HttpRequest;
 import org.api.models.user.Address;
@@ -14,10 +13,8 @@ import org.api.models.user.User;
 import org.api.utils.Utils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.api.utils.Utils.mapResponseToObject;
 import static org.api.utils.Utils.mapResponseToObjectsList;
@@ -60,7 +57,6 @@ public class UserService implements IUserInterface {
      */
     @Override
     public User addUser(User user) throws IOException, RestClient.HttpRequestException {
-
         request=new HttpRequest(HttpMethod.POST, Constants.BASE_URL + Constants.USERS_ENDPOINT, mapper.writeValueAsString(user),Utils.createJsonHeader());
         return mapResponseToObject(client.executeRequest(request), User.class);
     }
@@ -145,21 +141,31 @@ public class UserService implements IUserInterface {
      * @param index index of user
      * @return User object.
      */
+    @Override
     public User getUserFromListByIndex(List<User> users,int index){
         return users.get(index);
-
     }
-    /**
-     * Generate random strings that can be used by tests.
-     * @param length The length of the generated string.
-     * @return Generated String.
-     */
-    public String generateRandomString(int length){
-        byte[] array=new byte[length];
-        new Random().nextBytes(array);
-        String generatedString=new String(array, Charset.forName("UTF-8"));
-        return generatedString;
+    @Override
+    public List<User> mapListToUsers(List<List<String>> records) {
+        List<User> users = new ArrayList<>();
+        for (int i = 1; i < records.size(); i++) {
+            User user = new User();
+            user.setId(Integer.parseInt(records.get(i).get(0)));
+            user.setEmail(records.get(i).get(1));
+            user.setUsername(records.get(i).get(2));
+            user.setPassword(records.get(i).get(3));
+            Name name = new Name(records.get(i).get(4), records.get(i).get(5));
+            user.setName(name);
+            Geolocation geolocation = new Geolocation(records.get(i).get(10), records.get(i).get(11));
+            Address address = new Address(records.get(i).get(6),
+                    records.get(i).get(7),
+                    Integer.parseInt(records.get(i).get(8)),
+                    records.get(i).get(9), geolocation);
+            user.setAddress(address);
+
+            users.add(user);
+
+        }
+        return users;
     }
-
-
 }

@@ -73,7 +73,6 @@ public class CartService implements ICartInterface {
         Map<String,String> jsonHeader= Utils.createJsonHeader();
         request=new HttpRequest(HttpMethod.PUT, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+cart.getId(),mapper.writeValueAsString(cart),jsonHeader);
         return mapResponseToObject(client.executeRequest(request), Cart.class);
-
     }
 
     /**
@@ -112,8 +111,6 @@ public class CartService implements ICartInterface {
     public List<Cart> getCartInDateRange(String startDate, String endDate) throws RestClient.HttpRequestException, IOException {
         request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.CARTS_ENDPOINT + "startdate="+ startDate +"&"+"enddate="+endDate, null, null);
         return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
-
-
     }
     /**
      * Sorts all carts in descending order.
@@ -163,7 +160,9 @@ public class CartService implements ICartInterface {
 
         }
         return carts;
+
     }
+
 
 
 }

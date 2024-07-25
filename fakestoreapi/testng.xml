@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="API fake store">
+    <test name="ProductsTestGroup">
+        <classes>
+            <class name="products.ProductsPositiveScenariosTests"/>
+            <class name="products.ProductsPositiveScenariosTests"/>
+        </classes>
+    </test>
+    <test name="cartsTestGroup">
+        <classes>
+            <class name="carts.CartsPositiveScenariosTests"></class>
+        </classes>
+    </test>
+    <test name="users.UsersPositiveScenarioTests">
+        <classes>
+            <class name="users.UsersPositiveScenarioTests"></class>
+        </classes>
+    </test>
+</suite>

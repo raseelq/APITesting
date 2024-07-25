@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.clients.RestClient;
 import org.api.constants.Constants;
 import org.api.interfaces.IProductInterface;
-import org.api.models.api.HTTPResponse;
 import org.api.models.api.HttpMethod;
 import org.api.models.api.HttpRequest;
 import org.api.models.product.Product;
@@ -146,8 +145,8 @@ public class ProductService implements IProductInterface {
         try{
             int fieldsCount=records.get(0).size();
             for(i=1;i<records.size();i++){
-                //Verify that the number of fields in the data file is correct before mapping
-                if(records.get(i).size()!=fieldsCount-1) {
+                //Verify that the number of fields(represented by headers) in the data file is correct before mapping
+                if(records.get(i).size()!=fieldsCount) {
                     throw new Exception("Data file fields count is not correct");
                 }
                     Product product = new Product();
@@ -167,6 +166,7 @@ public class ProductService implements IProductInterface {
         }
         return products;
     }
+
 
 
 

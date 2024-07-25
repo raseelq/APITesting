@@ -1,3 +1,5 @@
+package products;
+
 import org.api.clients.RestClient;
 import org.api.interfaces.IProductInterface;
 import org.api.models.product.Product;
@@ -12,12 +14,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 @Listeners(ExtentReportsListeners.class)
-public class ProductsNegativeScenariosTests {
-    IProductInterface productService;
-    @BeforeSuite
-    public void setup(){
-        productService=new ProductService();
-    }
+public class ProductsNegativeScenariosTests extends ProductsBaseClass{
 
     /**
      * Verifies that the number of products returned by the getAllProducts method matches the expected products count.

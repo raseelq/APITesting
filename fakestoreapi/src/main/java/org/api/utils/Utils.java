@@ -10,10 +10,14 @@ import org.api.models.api.HTTPResponse;
 import org.api.models.api.HttpMethod;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
     public static Map<String, String> createHeader(String key, String value) {
@@ -81,6 +85,52 @@ public class Utils {
 
         }
         return values;
+    }
+    /**
+     * Generate random strings that can be used by tests.
+     * @param length The length of the generated string.
+     * @return Generated String.
+     */
+    public static String generateRandomString(int length){
+        byte[] array=new byte[length];
+        new Random().nextBytes(array);
+        String generatedString=new String(array, Charset.forName("UTF-8"));
+        return generatedString;
+    }
+    public static int generateRandomInt(int min,int max){
+        Random random=new Random();
+        return random.nextInt((max-min)+1 +min);
+    }
+    public static double generateRandomDouble(){
+        Random random=new Random();
+        return random.nextDouble();
+    }
+    public static LocalDate generateRandomDate(String startDate,String endDate){
+        long startEpochDay=dateFormatter(startDate).toEpochDay();
+        long endEpochDay=dateFormatter(endDate).toEpochDay();
+        long randomEpochDay=ThreadLocalRandom.current().nextLong(startEpochDay,endEpochDay+1);
+        return LocalDate.ofEpochDay(randomEpochDay);
+    }
+    public static <T> T mapPayloadToObject(Map<String,Object> payload,Class<T> type) throws Exception {
+        T instance;
+        try {
+            instance =type.getDeclaredConstructor().newInstance();
+            for(Map.Entry<String ,Object> entry:payload.entrySet()){
+                String fieldName=entry.getKey();
+                Object fieldValue=entry.getValue();
+                Field field=type.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                field.set(instance,fieldValue);
+            }
+        }
+         catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException("Field not found or not accessible: " + e.getMessage());
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to map payload to object");
+        }
+        return instance;
+
     }
 }
 

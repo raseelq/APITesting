@@ -1,12 +1,10 @@
+package products;
+
 import org.api.clients.RestClient;
-import org.api.constants.Constants;
-import org.api.interfaces.IProductInterface;
 import org.api.models.product.Product;
 import org.api.reports.ExtentReportsListeners;
-import org.api.services.ProductService;
 import org.api.utils.Utils;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -15,25 +13,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 @Listeners(ExtentReportsListeners.class)
-public class ProductsPositiveScenariosTests {
-    IProductInterface productService;
-    List<Product> products;
-    @BeforeSuite
-    public void setup() throws Exception {
+public class ProductsPositiveScenariosTests extends ProductsBaseClass {
 
-        productService=new ProductService();
-        String resourcesFile= this.getClass().getClassLoader().getResource(Constants.PRODUCTS_SOURCE_FILE).getFile();
-        List<List<String>> records= Utils.readCSVResourceFile(resourcesFile,",");
-        products=productService.mapProductsListFromDataFile(records);
-    }
+
     /**
      * Verifies that the number of products returned by the getAllProducts method matches the expected count.
      * @throws IOException if an I/O error occurs.
      */
     @Test
     public void verifyGetAllProducts() throws Exception {
-        int count=20;
-        Assert.assertEquals(productService.getAllProducts().size(),count,"Number of products mismatch");
+        Assert.assertEquals(productService.getAllProducts().size(),products.size(),"Number of products mismatch");
         }
     /**
      * Verifies that the product ID returned by the getProductById method matches the given product ID.
@@ -59,14 +48,10 @@ public class ProductsPositiveScenariosTests {
      */
     @Test
     public void verifyAddProduct() throws Exception {
-        Product product= products.get(0);
-//        product.setPrice(13.5);
-//        product.setImage("https://i.pravatar.cc");
-//        product.setDescription("lorem ipsum set");
-//        product.setTitle("test product");
-//        product.setCategory("electronic");
-//        int size=productService.getAllProducts().size();
+        Product product=productsTestData.get("validTestProductPayload");
         Product newProduct=productService.addProduct(product);
+        Assert.assertEquals(newProduct.getCategory(),product.getCategory());
+        Assert.assertEquals(newProduct.getTitle(),product.getTitle());
         Assert.assertEquals(newProduct.getPrice(),product.getPrice());
         Assert.assertEquals(newProduct.getImage(),product.getImage());
         //Assert.assertEquals(size,productService.getAllProducts().size()+1);  This line fails because API doesnt work properly
@@ -81,11 +66,11 @@ public class ProductsPositiveScenariosTests {
     @Test(dataProvider = "validProductIdsProvider")
     public void verifyUpdateProduct(int Id) throws IOException, RestClient.HttpRequestException {
         Product product=productService.getProductById(Id);
-        product.setPrice(14.5);
+        double newPrice=Utils.generateRandomDouble();
+        product.setPrice(newPrice);
         productService.updateProduct(product);
-        Assert.assertEquals(productService.updateProduct(product).getPrice(),14.5);
+        Assert.assertEquals(productService.updateProduct(product).getPrice(),newPrice);
         Assert.assertEquals(productService.updateProduct(product).getId(),Id);
-
     }
     /**
      * Verifies that all defined categories are returned successfully by the getAllCategories method.
@@ -99,8 +84,8 @@ public class ProductsPositiveScenariosTests {
         categories.add("jewelery");
         categories.add("men's clothing");
         categories.add("women's clothing");
-        Assert.assertEquals(productService.getAllCategories().size(),count,"Number of products mismatch");
-        Assert.assertEquals(productService.getAllCategories(),categories);
+        Assert.assertEquals(categoriesList.size(),count,"Number of categories mismatch");
+        Assert.assertEquals(categoriesList,categories);
     }
 
     /**
@@ -109,8 +94,7 @@ public class ProductsPositiveScenariosTests {
      */
     @Test
     public void verifyListProductsInCategory() throws IOException, RestClient.HttpRequestException {
-        List<String> categories=productService.getAllCategories();
-        for(String category:categories){
+        for(String category:categoriesList){
             Assert.assertNotNull(productService.getAllProductsInACategory(category));
         }
     }
@@ -136,10 +120,9 @@ public class ProductsPositiveScenariosTests {
      */
     @Test
     public void verifyProductLimits() throws RestClient.HttpRequestException, IOException {
-        int limit=5;
+        int limit=Utils.generateRandomInt(0,10);
         List<Product> products=productService.limitProductsResults(limit);
         Assert.assertEquals(products.size(),limit);
-
     }
     /**
      * Provides valid product IDs for parameterized tests.
