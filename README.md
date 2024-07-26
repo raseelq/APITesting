@@ -7,7 +7,6 @@ TestNG
 RestClient
 Appropriate dependencies for running and reporting tests
 
-Test Cases:
 **Products API**
 **Positive Test Cases are covered in "ProductsPositiveScenariosTests" file:**
 1. Get All Products
@@ -68,7 +67,7 @@ Test Cases:
 
 
 **Negative Test Cases that are not covered**
-The following test cases are not implemented as APIs always work properly (success 200) when executing them.
+The following test cases are not implemented as APIs doesn't work as expected (success 200) when invalid or missing data is provided.
 1. Limit Results - Negative Limit
 2. Sort Results - Invalid Sort Parameter
 3. Add New Product/User/Cart - Missing Fields
