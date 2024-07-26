@@ -1,6 +1,5 @@
-This repo is to provide testing of different APIs in the fakeapistore:https://fakestoreapi.com/docs
-API Test Cases
-This document provides an overview of the test cases for the Products, Users, and Carts APIs. It covers the various operations such as retrieving, adding, updating, and deleting resources, and is implemented using TestNG.
+**API Test Cases**
+This document provides an overview of the test cases for the Products, Users, and Carts APIs of the fakestore:https://fakestoreapi.com/docs.  It covers the various operations such as retrieving, adding, updating, and deleting resources, and is implemented using TestNG.
 
 Prerequisites
 Java 8 or higher
