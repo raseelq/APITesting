@@ -21,18 +21,17 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
     @Test
     private void verifyAllUsers() throws RestClient.HttpRequestException, IOException {
         List<User> users=userService.getAllUsers();
-        Assert.assertEquals(userService.getAllUsers().size(),usersList.size());
+        Assert.assertEquals(userService.getAllUsers().size(),usersList.size(), "The number of users returned does not match the expected list size");
     }
     @Test(dataProvider = "getUserValidIds")
     public void verifyGetUserById(int Id) throws RestClient.HttpRequestException, IOException {
         User user=userService.getUserById(Id);
         User comparedUser=userService.getUserFromListByIndex(usersList,Id-1);
-        Assert.assertEquals(user.getId(),Id);
-        Assert.assertEquals(user.getUsername(),comparedUser.getUsername());
-        Assert.assertEquals(user.getEmail(),comparedUser.getEmail());
-        Assert.assertEquals(user.getPassword(),comparedUser.getPassword());
-        Assert.assertTrue(user.getAddress().equals(comparedUser.getAddress()));
-        Assert.assertEquals(user.getEmail(),comparedUser.getEmail());
+        Assert.assertEquals(user.getId(), Id, "User ID does not match");
+        Assert.assertEquals(user.getUsername(), comparedUser.getUsername(), "Username does not match");
+        Assert.assertEquals(user.getEmail(), comparedUser.getEmail(), "Email does not match");
+        Assert.assertEquals(user.getPassword(), comparedUser.getPassword(), "Password does not match");
+        Assert.assertEquals(user.getAddress(), comparedUser.getAddress(), "Address does not match");
 
     }
     @Test void verifyAddNonExistingValidUser() throws RestClient.HttpRequestException, IOException {
@@ -45,11 +44,10 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
         Name name=new Name(firstname,lastname);
         newUser.setName(name);
         newUser.setEmail(email);
-        User user=userService.addUser(newUser);
+        User addedUser=userService.addUser(newUser);
         //verify correct added user details
-        Assert.assertTrue(newUser.getName().equals(name));
-        Assert.assertEquals(newUser.getEmail(),email);
-        Assert.assertNotNull(newUser.getId());
+        Assert.assertEquals(addedUser.getName(), name, "User name does not match");
+        Assert.assertEquals(addedUser.getEmail(), email, "User email does not match");
         //verify list size is increased by 1
         //Assert.assertEquals(listSizeBeforeAdd,listSizeBeforeAdd+1); //This line fails because API doesn't increase size correctly
         //delete user for cleanup
@@ -63,25 +61,24 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
         beforeUpdateUser.setPhone("1-570-598-1510");
         beforeUpdateUser.setEmail(email);
         beforeUpdateUser.getAddress().setCity("Chicago");
-        User afterUpdateUser=userService.updateUser(beforeUpdateUser);
+        User afterUpdateUser = userService.updateUser(beforeUpdateUser);
         //verify the unchanged properties
-        Assert.assertEquals(beforeUpdateUser.getUsername(),afterUpdateUser.getUsername());
-        Assert.assertEquals(beforeUpdateUser.getPassword(),afterUpdateUser.getPassword());
-        Assert.assertEquals(beforeUpdateUser.getAddress().getNumber(),afterUpdateUser.getAddress().getNumber());
-        Assert.assertEquals(beforeUpdateUser.getAddress().getZipcode(),afterUpdateUser.getAddress().getZipcode());
-        Assert.assertEquals(beforeUpdateUser.getAddress().getStreet(),afterUpdateUser.getAddress().getStreet());
-        Assert.assertTrue(beforeUpdateUser.getName().equals(afterUpdateUser.getName()));
-        Assert.assertTrue(beforeUpdateUser.getAddress().getGeolocation().equals(afterUpdateUser.getAddress().getGeolocation()));
-        //verify changed properties
-        Assert.assertEquals(beforeUpdateUser.getPhone(),"1-570-598-1510");
-        Assert.assertEquals(beforeUpdateUser.getEmail(),email);
-        Assert.assertEquals(beforeUpdateUser.getAddress().getCity(),"Chicago");
+        Assert.assertEquals(afterUpdateUser.getUsername(), beforeUpdateUser.getUsername(), "Username does not match");
+        Assert.assertEquals(afterUpdateUser.getPassword(), beforeUpdateUser.getPassword(), "Password does not match");
+        Assert.assertEquals(afterUpdateUser.getAddress().getNumber(), beforeUpdateUser.getAddress().getNumber(), "Address number does not match");
+        Assert.assertEquals(afterUpdateUser.getAddress().getZipcode(), beforeUpdateUser.getAddress().getZipcode(), "Zipcode does not match");
+        Assert.assertEquals(afterUpdateUser.getAddress().getStreet(), beforeUpdateUser.getAddress().getStreet(), "Street does not match");
+        Assert.assertEquals(afterUpdateUser.getName(), beforeUpdateUser.getName(), "Name does not match");
+        Assert.assertEquals(afterUpdateUser.getAddress().getGeolocation(), beforeUpdateUser.getAddress().getGeolocation(), "Geolocation does not match");
+        Assert.assertEquals(afterUpdateUser.getPhone(), "1-570-598-1510", "Phone number does not match");
+        Assert.assertEquals(afterUpdateUser.getEmail(), email, "Email does not match");
+        Assert.assertEquals(afterUpdateUser.getAddress().getCity(), "Chicago", "City does not match");
 
     }
     @Test
     public void verifyDeleteUser() throws RestClient.HttpRequestException, IOException {
         int Id=1;
-        User user=userService.deleteUser(1);
+        User user=userService.deleteUser(Id);
         //Assert.assertNull(service.getUserById(Id)); This test fails because delete doesn't work properly
 
     }

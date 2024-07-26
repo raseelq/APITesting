@@ -2,22 +2,17 @@ package org.api.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.clients.RestClient;
-
 import org.api.constants.Constants;
 import org.api.interfaces.ICartInterface;
 import org.api.models.api.HttpMethod;
 import org.api.models.cart.Cart;
-import org.api.models.api.HTTPResponse;
 import org.api.models.api.HttpRequest;
 import org.api.models.cart.CartItem;
-import org.api.models.product.Product;
 import org.api.utils.Utils;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import static org.api.utils.Utils.mapResponseToObject;
 import static org.api.utils.Utils.mapResponseToObjectsList;
 
@@ -33,8 +28,13 @@ public class CartService implements ICartInterface {
      */
     @Override
     public List<Cart> getAllCarts() throws IOException, RestClient.HttpRequestException {
-        request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT,null,null);
-        return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        try{
+            request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT,null,null);
+            return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching all carts: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Retrieves a cart by its ID.
@@ -45,8 +45,13 @@ public class CartService implements ICartInterface {
      */
     @Override
     public Cart getCartById(int Id) throws IOException, RestClient.HttpRequestException {
-        request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+Id,null,null);
-        return mapResponseToObject(client.executeRequest(request), Cart.class);
+        try {
+            request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.GET_ALL_CARTS_ENDPOINT + Id, null, null);
+            return mapResponseToObject(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching Cart by Id: "+ Id + "" + e.getMessage());
+            throw e;
+        }
     }
     /**
      * Adds a new cart.
@@ -57,9 +62,14 @@ public class CartService implements ICartInterface {
      */
     @Override
     public Cart addNewCart(Cart cart) throws RestClient.HttpRequestException, IOException {
-        Map<String,String> jsonHeader= Utils.createJsonHeader();
-        request=new HttpRequest(HttpMethod.POST, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT,mapper.writeValueAsString(cart),jsonHeader);
-        return mapResponseToObject(client.executeRequest(request), Cart.class);
+        try{
+            Map<String,String> jsonHeader= Utils.createJsonHeader();
+            request=new HttpRequest(HttpMethod.POST, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT,mapper.writeValueAsString(cart),jsonHeader);
+            return mapResponseToObject(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while adding a new cart: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Updates an existing cart.
@@ -70,9 +80,15 @@ public class CartService implements ICartInterface {
      */
     @Override
     public Cart updateCart(Cart cart) throws RestClient.HttpRequestException, IOException {
-        Map<String,String> jsonHeader= Utils.createJsonHeader();
-        request=new HttpRequest(HttpMethod.PUT, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+cart.getId(),mapper.writeValueAsString(cart),jsonHeader);
-        return mapResponseToObject(client.executeRequest(request), Cart.class);
+        try{
+            Map<String,String> jsonHeader= Utils.createJsonHeader();
+            request=new HttpRequest(HttpMethod.PUT, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+cart.getId(),mapper.writeValueAsString(cart),jsonHeader);
+            return mapResponseToObject(client.executeRequest(request), Cart.class);
+        }
+        catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while updating cart: "+ e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -84,8 +100,13 @@ public class CartService implements ICartInterface {
      **/
     @Override
     public Cart deleteCart(int Id) throws RestClient.HttpRequestException, IOException {
-        HttpRequest request=new HttpRequest(HttpMethod.DELETE, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+Id,null, null);
-        return mapResponseToObject(client.executeRequest(request), Cart.class);
+        try{
+            HttpRequest request=new HttpRequest(HttpMethod.DELETE, Constants.BASE_URL+Constants.GET_ALL_CARTS_ENDPOINT+Id,null, null);
+            return mapResponseToObject(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while deleting cart Id : "+ Id+ ""+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Retrieves all carts for a specific user.
@@ -96,8 +117,13 @@ public class CartService implements ICartInterface {
      */
     @Override
     public List<Cart> getUserCart(int userId) throws RestClient.HttpRequestException, IOException {
-        request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.GET_ALL_CARTS_ENDPOINT + Constants.GET_USER_ENDPOINT + userId, null, null);
-        return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        try{
+            request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.GET_ALL_CARTS_ENDPOINT + Constants.GET_USER_ENDPOINT + userId, null, null);
+            return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching user cart: "+ userId+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Retrieves carts within a specified date range.
@@ -109,8 +135,13 @@ public class CartService implements ICartInterface {
      */
     @Override
     public List<Cart> getCartInDateRange(String startDate, String endDate) throws RestClient.HttpRequestException, IOException {
-        request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.CARTS_ENDPOINT + "startdate="+ startDate +"&"+"enddate="+endDate, null, null);
-        return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        try {
+            request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.CARTS_ENDPOINT + "startdate=" + startDate + "&" + "enddate=" + endDate, null, null);
+            return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching cart in date range: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Sorts all carts in descending order.
@@ -119,9 +150,14 @@ public class CartService implements ICartInterface {
      * @throws IOException If there is an I/O error.
      */
     @Override
-    public List<Cart> sortAllCartsDescending() throws IOException, RestClient.HttpRequestException {
-        HttpRequest request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.CARTS_ENDPOINT+"sort=desc",null, null);
-        return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+    public List<Cart> sortAllCarts(String sort) throws IOException, RestClient.HttpRequestException {
+        try{
+            HttpRequest request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.CARTS_ENDPOINT+Constants.SORT+sort,null, null);
+            return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while sorting all carts: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Limits the number of carts in the result set.
@@ -132,8 +168,13 @@ public class CartService implements ICartInterface {
      */
     @Override
     public List<Cart> limitCartsResults(int limit) throws IOException, RestClient.HttpRequestException {
-        HttpRequest request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL+Constants.CARTS_ENDPOINT+"limit="+limit,null, null);
-        return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        try {
+            HttpRequest request = new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.CARTS_ENDPOINT + "limit=" + limit, null, null);
+            return mapResponseToObjectsList(client.executeRequest(request), Cart.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while limiting sort results: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Maps a list of lists of strings to a list of Cart objects.

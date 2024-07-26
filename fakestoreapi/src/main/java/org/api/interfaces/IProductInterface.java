@@ -12,7 +12,7 @@ public interface IProductInterface {
      *
      * @return  List of all products
      */
-    public List<Product> getAllProducts() throws Exception;
+    public List<Product> getAllProducts() throws IOException, RestClient.HttpRequestException;
 
     /**
      *
@@ -54,7 +54,7 @@ public interface IProductInterface {
     public List<String> getAllCategories() throws IOException, RestClient.HttpRequestException;
     public List<Product> getAllProductsInACategory(String category) throws IOException, RestClient.HttpRequestException;
 
-    public List<Product> sortAllProductsDescending() throws IOException, RestClient.HttpRequestException;
+    public List<Product> sortAllProducts(String sort) throws IOException, RestClient.HttpRequestException;
     public List<Product> limitProductsResults(int limit) throws IOException, RestClient.HttpRequestException;
     public List<Product> mapProductsListFromDataFile(List<List<String>> records) throws Exception;
 }

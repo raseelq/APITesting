@@ -32,8 +32,13 @@ public class UserService implements IUserInterface {
      */
     @Override
     public List<User> getAllUsers() throws RestClient.HttpRequestException, IOException {
-        request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.USERS_ENDPOINT,null,null);
-        return mapResponseToObjectsList(client.executeRequest(request), User.class);
+        try{
+            request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.USERS_ENDPOINT,null,null);
+            return mapResponseToObjectsList(client.executeRequest(request), User.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching all users: "+ e.getMessage());
+            throw e;
+        }
 
     }
     /**
@@ -45,8 +50,14 @@ public class UserService implements IUserInterface {
      */
     @Override
     public User getUserById(int Id) throws RestClient.HttpRequestException, IOException {
-        request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.USERS_ENDPOINT+Id,null,null);
-        return mapResponseToObject(client.executeRequest(request), User.class);
+
+        try{
+            request=new HttpRequest(HttpMethod.GET, Constants.BASE_URL + Constants.USERS_ENDPOINT+Id,null,null);
+            return mapResponseToObject(client.executeRequest(request), User.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while fetching user: "+Id+ ""+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Adds a new user.
@@ -57,8 +68,13 @@ public class UserService implements IUserInterface {
      */
     @Override
     public User addUser(User user) throws IOException, RestClient.HttpRequestException {
-        request=new HttpRequest(HttpMethod.POST, Constants.BASE_URL + Constants.USERS_ENDPOINT, mapper.writeValueAsString(user),Utils.createJsonHeader());
-        return mapResponseToObject(client.executeRequest(request), User.class);
+        try{
+            request=new HttpRequest(HttpMethod.POST, Constants.BASE_URL + Constants.USERS_ENDPOINT, mapper.writeValueAsString(user),Utils.createJsonHeader());
+            return mapResponseToObject(client.executeRequest(request), User.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while adding user: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Updates an existing user.
@@ -69,8 +85,13 @@ public class UserService implements IUserInterface {
      */
     @Override
     public User updateUser(User user) throws RestClient.HttpRequestException, IOException {
-        request=new HttpRequest(HttpMethod.PUT, Constants.BASE_URL + Constants.USERS_ENDPOINT+user.getId(), mapper.writeValueAsString(user),Utils.createJsonHeader());
-        return mapResponseToObject(client.executeRequest(request), User.class);
+        try {
+            request = new HttpRequest(HttpMethod.PUT, Constants.BASE_URL + Constants.USERS_ENDPOINT + user.getId(), mapper.writeValueAsString(user), Utils.createJsonHeader());
+            return mapResponseToObject(client.executeRequest(request), User.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while updating user: "+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Deletes a user by its ID.
@@ -81,9 +102,13 @@ public class UserService implements IUserInterface {
      **/
     @Override
     public User deleteUser(int Id) throws RestClient.HttpRequestException, IOException {
-        request=new HttpRequest(HttpMethod.DELETE, Constants.BASE_URL + Constants.USERS_ENDPOINT+Id, null,Utils.createJsonHeader());
-        return mapResponseToObject(client.executeRequest(request), User.class);
-
+        try {
+            request = new HttpRequest(HttpMethod.DELETE, Constants.BASE_URL + Constants.USERS_ENDPOINT + Id, null, Utils.createJsonHeader());
+            return mapResponseToObject(client.executeRequest(request), User.class);
+        }catch (RestClient.HttpRequestException | IOException e ){
+            System.err.println("Error occurred while deleting user: "+Id+ ""+ e.getMessage());
+            throw e;
+        }
     }
     /**
      * Maps a list of lists of strings to a list of user objects.
@@ -145,6 +170,12 @@ public class UserService implements IUserInterface {
     public User getUserFromListByIndex(List<User> users,int index){
         return users.get(index);
     }
+    /**
+     * Maps a list of lists of strings from a data file to a list of User objects.
+     * @param records The list of lists of strings to be mapped.
+     * @return List<Product> A list of User objects.
+     * @throws Exception If the number of fields in the data file is incorrect.
+     */
     @Override
     public List<User> mapListToUsers(List<List<String>> records) {
         List<User> users = new ArrayList<>();
