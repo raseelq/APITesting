@@ -1,6 +1,7 @@
 package carts;
 
 import org.api.constants.Constants;
+import org.api.helpers.CartHelper;
 import org.api.interfaces.ICartInterface;
 import org.api.interfaces.IProductInterface;
 import org.api.models.cart.Cart;
@@ -28,7 +29,7 @@ public class CartsBaseClass {
     protected void setup() throws Exception {
         String resourcesFile= this.getClass().getClassLoader().getResource(Constants.CARTS_SOURCE_FILE).getFile();
         List<List<String>> records= Utils.readCSVResourceFile(resourcesFile,",");
-        carts=cartService.mapListToCarts(records);
+        carts= CartHelper.mapListToCarts(records);
         cartsTestData=new HashMap<>();
         cartsTestData.put("validCartTestPayload",createValidCartPayload());
     }

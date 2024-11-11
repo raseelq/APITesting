@@ -14,6 +14,4 @@ public interface IUserInterface {
     public User updateUser(User user) throws RestClient.HttpRequestException, IOException;
     public User deleteUser(int id) throws RestClient.HttpRequestException, IOException;
 
-    List<User> mapListToUsers(List<List<String>> records);
-    public User getUserFromListByIndex(List<User> users,int index);
 }

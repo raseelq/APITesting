@@ -92,10 +92,11 @@ public class Utils {
      * @return Generated String.
      */
     public static String generateRandomString(int length){
-        byte[] array=new byte[length];
-        new Random().nextBytes(array);
-        String generatedString=new String(array, Charset.forName("UTF-8"));
-        return generatedString;
+        String uuid =UUID.randomUUID().toString().replace("-","");
+        if(length> uuid.length()){
+            throw new IllegalArgumentException("Requested length is too long");
+        }
+        return uuid.substring(0,length);
     }
     public static int generateRandomInt(int min,int max){
         Random random=new Random();

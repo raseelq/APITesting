@@ -2,6 +2,7 @@ package users;
 
 import org.api.clients.RestClient;
 import org.api.constants.Constants;
+import org.api.helpers.UserHelper;
 import org.api.models.user.Name;
 import org.api.models.user.User;
 import org.api.reports.ExtentReportsListeners;
@@ -26,7 +27,7 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
     @Test(dataProvider = "getUserValidIds")
     public void verifyGetUserById(int Id) throws RestClient.HttpRequestException, IOException {
         User user=userService.getUserById(Id);
-        User comparedUser=userService.getUserFromListByIndex(usersList,Id-1);
+        User comparedUser= UserHelper.getUserFromListByIndex(usersList,Id-1);
         Assert.assertEquals(user.getId(), Id, "User ID does not match");
         Assert.assertEquals(user.getUsername(), comparedUser.getUsername(), "Username does not match");
         Assert.assertEquals(user.getEmail(), comparedUser.getEmail(), "Email does not match");
@@ -38,10 +39,12 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
         //get users list size before adding a new user
         int listSizeBeforeAdd=userService.getAllUsers().size();
         User newUser=new User();
-        String firstname=Utils.generateRandomString(7);
-        String lastname=Utils.generateRandomString(7);
-        String email=firstname+"gmail.com";
-        Name name=new Name(firstname,lastname);
+        String firstName=Utils.generateRandomString(7);
+        System.out.println(firstName);
+        String lastName=Utils.generateRandomString(7);
+        System.out.println(lastName);
+        String email=firstName+"@gmail.com";
+        Name name=new Name(firstName,lastName);
         newUser.setName(name);
         newUser.setEmail(email);
         User addedUser=userService.addUser(newUser);
@@ -49,14 +52,14 @@ public class UsersPositiveScenarioTests extends UserBaseClass{
         Assert.assertEquals(addedUser.getName(), name, "User name does not match");
         Assert.assertEquals(addedUser.getEmail(), email, "User email does not match");
         //verify list size is increased by 1
-        //Assert.assertEquals(listSizeBeforeAdd,listSizeBeforeAdd+1); //This line fails because API doesn't increase size correctly
+        //Assert.assertEquals(listSizeBeforeAdd,listSizeBeforeAdd+1); //This line fails because API doesn't increase size correctly and doesn't add users properly
         //delete user for cleanup
         userService.deleteUser(newUser.getId());
     }
 
     @Test
     public void verifyUpdateUser() throws RestClient.HttpRequestException, IOException {
-        User beforeUpdateUser=userService.getUserFromListByIndex(usersList,0);
+        User beforeUpdateUser=UserHelper.getUserFromListByIndex(usersList,0);
         String email=Utils.generateRandomString(6)+"gmail.com";
         beforeUpdateUser.setPhone("1-570-598-1510");
         beforeUpdateUser.setEmail(email);

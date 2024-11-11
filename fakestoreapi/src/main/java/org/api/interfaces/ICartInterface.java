@@ -16,7 +16,6 @@ public interface ICartInterface {
     public List<Cart> getCartInDateRange(String date1,String date2) throws RestClient.HttpRequestException, IOException;
     public List<Cart> sortAllCarts(String sort) throws IOException, RestClient.HttpRequestException;
     public List<Cart> limitCartsResults(int limit) throws IOException, RestClient.HttpRequestException;
-    public List<Cart> mapListToCarts(List<List<String>> records);
 
 
 }

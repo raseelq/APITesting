@@ -2,6 +2,7 @@ package products;
 
 import org.api.clients.RestClient;
 import org.api.constants.Constants;
+import org.api.helpers.ProductHelper;
 import org.api.interfaces.IProductInterface;
 import org.api.models.product.Product;
 import org.api.services.ProductService;
@@ -24,7 +25,7 @@ public class ProductsBaseClass {
         productService=new ProductService();
         String resourcesFile= this.getClass().getClassLoader().getResource(Constants.PRODUCTS_SOURCE_FILE).getFile();
         List<List<String>> records= Utils.readCSVResourceFile(resourcesFile,",");
-        products=productService.mapProductsListFromDataFile(records);
+        products= ProductHelper.mapProductsListFromDataFile(records);
         productsTestData.put("validTestProductPayload",createValidProductPayload());
     }
 

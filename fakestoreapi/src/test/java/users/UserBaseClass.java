@@ -1,6 +1,7 @@
 package users;
 
 import org.api.constants.Constants;
+import org.api.helpers.UserHelper;
 import org.api.interfaces.IUserInterface;
 import org.api.models.user.User;
 import org.api.services.UserService;
@@ -18,6 +19,6 @@ public class UserBaseClass {
         userService =new UserService();
         String resourcesFilePath=this.getClass().getClassLoader().getResource(Constants.USERS_SOURCE_FILE).getFile();
         List<List<String>> records= Utils.readCSVResourceFile(resourcesFilePath,",");
-        usersList=userService.mapListToUsers(records);
+        usersList= UserHelper.mapListToUsers(records);
     }
 }

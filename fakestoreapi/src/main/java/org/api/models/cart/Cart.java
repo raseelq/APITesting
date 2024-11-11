@@ -64,12 +64,7 @@ public class Cart {
 
     @Override
     public String toString() {
-        return "Cart{" +
-                "userId=" + userId +
-                ", date='" + date + '\'' +
-                ", products=" + products +
-                ", id=" + id +
-                '}';
+        return String.format("Cart{userId=%d,date=%s,products=%s,id=%d}",userId,date,products,id);
     }
 
     @Override
